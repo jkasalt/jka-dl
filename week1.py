@@ -22,21 +22,21 @@ A = torch.empty(5000,5000).normal_()
 B = torch.empty(5000,5000).normal_()
 C = torch.mm(A,B)
 end_time = time.perf_counter()
+print("big multiplication: {} seconds".format(end_time - start_time))
 # =========================================
 def mul_row(T):
     output = torch.empty(T.size())
     num_lines = T.size()[0]
     num_cols = T.size()[1]
-    for n, i in enumerate(range(num_lines)):
-        n += 1
+    for i in range(num_lines):
         for j in range(num_cols):
-            output[i,j] = n * T[i,j]
+            output[i,j] = (i + 1) * T[i,j]
     return output
 
 def mul_row_fast(T):
     num_lines = float(T.size()[0])
-    mul_vals = torch.diag(torch.arange(1, num_lines+1))
-    output = torch.mm(mul_vals, T)
+    mul_vals = torch.arange(1, num_lines+1).view(-1,1).float()
+    output = T.mul(mul_vals)
     return output
 
 m = torch.full((1000, 400), 2.0)
